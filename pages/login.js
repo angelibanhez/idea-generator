@@ -113,8 +113,13 @@ const Login = () => {
     setLoading(false)
   }
 
-  const handleOAuthLogin = async (provider) => {
-    const { error } = await supabase.auth.signInWithOAuth({ provider })
+  const handleGoogleLogin = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: 'http://localhost:3000/protected'
+      }
+    })
     if (error) {
       alert(error.message)
     }
@@ -156,7 +161,7 @@ const Login = () => {
             <Button type="submit" disabled={loading}>
               {loading ? 'Loading...' : 'Login'}
             </Button>
-            <GoogleButton onClick={() => handleOAuthLogin('google')}>
+            <GoogleButton onClick={handleGoogleLogin}>
               <GoogleIcon />
               Login with Google
             </GoogleButton>
