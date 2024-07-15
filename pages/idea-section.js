@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import IdeaCard from '/components/IdeaCard';
 import Header from '/components/Header';
 import AddIdea from '/components/AddIdea';
+import SearchBar from '/components/SearchBar';
 import styled from 'styled-components';
 
 export default function Component() {
@@ -9,6 +10,9 @@ export default function Component() {
   const [ideas, setIdeas] = useState([
     { title: "Product launch", description: "Description of the idea", lastModified: "12/24", badge: "Business" }
   ]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedTitle, setSelectedTitle] = useState('');
+  const [viewMode, setViewMode] = useState('card'); // 'card' or 'list'
 
   const handleAddIdeaClick = () => {
     setAddIdeaVisible(true);
@@ -23,6 +27,23 @@ export default function Component() {
     setAddIdeaVisible(false);
   };
 
+  const handleCardClick = (title) => {
+    setSelectedTitle(title);
+  };
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleViewModeToggle = () => {
+    setViewMode(viewMode === 'card' ? 'list' : 'card');
+  };
+
+  const filteredIdeas = ideas.filter((idea) =>
+    idea.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    idea.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <>
 
@@ -30,17 +51,34 @@ export default function Component() {
         <Header />
         <Content>
           <Sidebar>
-            <StyledInput placeholder="search" />
-            <SidebarTitle>Recent ideas</SidebarTitle>
+            <SearchBar searchTerm={searchTerm} onSearchChange={handleSearchChange} />
+            <SidebarHeader>
+              <SidebarTitle>Recent ideas</SidebarTitle>
+              <ViewToggleButton onClick={handleViewModeToggle}>
+                {viewMode === 'card' ? 'List View' : 'Card View'}
+              </ViewToggleButton>
+            </SidebarHeader>
             <StyledButton onClick={handleAddIdeaClick}>+</StyledButton>
-            {ideas.map((idea, index) => (
-              <IdeaCard
-                key={index}
-                title={idea.title}
-                description={idea.description}
-                lastModified={idea.lastModified}
-                badge={idea.badge}
-              />
+            {filteredIdeas.map((idea, index) => (
+              viewMode === 'card' ? (
+                <IdeaCard
+                  key={index}
+                  title={idea.title}
+                  description={idea.description}
+                  lastModified={idea.lastModified}
+                  badge={idea.badge}
+                  isSelected={selectedTitle === idea.title}
+                  onClick={() => handleCardClick(idea.title)}
+                />
+              ) : (
+                <IdeaListItem
+                  key={index}
+                  onClick={() => handleCardClick(idea.title)}
+                  isSelected={selectedTitle === idea.title}
+                >
+                  {idea.title}
+                </IdeaListItem>
+              )
             ))}
           </Sidebar>
           <Main>
@@ -51,7 +89,7 @@ export default function Component() {
               <SmallButton>+</SmallButton>
             </ButtonGroup>
             <MainContent>
-              <MainTitle>Product launch</MainTitle>
+              <MainTitle>{selectedTitle}</MainTitle>
             </MainContent>
           </Main>
           <SidebarRight>
@@ -63,6 +101,8 @@ export default function Component() {
                 description="Description of workflow"
                 lastModified="12/24"
                 badge="Title"
+                isSelected={selectedTitle === "Workflow for"}
+                onClick={() => handleCardClick("Workflow for")}
               />
             </Section>
             <Section>
@@ -73,6 +113,8 @@ export default function Component() {
                 description="Description of workflow"
                 lastModified="12/24"
                 badge="Video"
+                isSelected={selectedTitle === "Video for"}
+                onClick={() => handleCardClick("Video for")}
               />
             </Section>
           </SidebarRight>
@@ -106,20 +148,28 @@ const Sidebar = styled.aside`
   border-right: 1px solid var(--border);
 `;
 
-const StyledInput = styled.input`
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 16px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background-color: var(--input);
+const SidebarHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
 `;
 
 const SidebarTitle = styled.h2`
-  margin-bottom: 8px;
   font-size: 18px;
   font-weight: 600;
   color: var(--foreground);
+`;
+
+const ViewToggleButton = styled.button`
+  background: none;
+  border: none;
+  color: var(--primary);
+  cursor: pointer;
+  font-size: 14px;
+  &:hover {
+    text-decoration: underline;
+  }
 `;
 
 const StyledButton = styled.button`
@@ -132,6 +182,20 @@ const StyledButton = styled.button`
   cursor: pointer;
   &:hover {
     background-color: var(--muted);
+  }
+`;
+
+const IdeaListItem = styled.div`
+  margin-bottom: 8px;
+  padding: 8px;
+  border: 1px solid ${(props) => (props.isSelected ? 'var(--primary)' : 'var(--border)')};
+  border-radius: 4px;
+  background-color: var(--card);
+  cursor: pointer;
+  transition: border-color 0.3s;
+
+  &:hover {
+    border-color: var(--primary);
   }
 `;
 
