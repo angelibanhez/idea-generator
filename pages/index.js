@@ -44,24 +44,26 @@ const Button = styled.a`
 `
 
 const LandingPage = () => {
-  const [mounted, setMounted] = useState(false);
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    setMounted(true)
+  }, [])
 
   if (!mounted) {
-    return null;
+    return null
   }
 
   return (
     <Container>
       <Title>Bienvenido a IDEA GENERATOR</Title>
-      <Description>Una plataforma para gestionar tus tareas y proyectos</Description>
-      <Link href="/login" passHref>
+      <Description>
+        Una plataforma para gestionar tus tareas y proyectos
+      </Description>
+      <Link href='/login' passHref>
         <Button>Login</Button>
       </Link>
-      <Link href="/signup" passHref>
+      <Link href='/signup' passHref>
         <Button>Sign Up</Button>
       </Link>
     </Container>

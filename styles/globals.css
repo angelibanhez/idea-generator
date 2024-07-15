@@ -27,6 +27,13 @@
   }
 }
 
+.flex-c-c{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+
 @layer base {
   * {
     @apply border-border;

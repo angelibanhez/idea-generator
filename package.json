@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "biome check",
+    "fixlint": "biome check --write"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.44.3",
@@ -16,6 +17,7 @@
     "styled-components": "^6.1.11"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.8.3",
     "eslint": "^8",
     "eslint-config-next": "14.2.5",
     "postcss": "^8",
